@@ -62,9 +62,6 @@ public class User {
     private String profile;
 
     @Column(nullable = false)
-    private String role;
-
-    @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)
