@@ -22,29 +22,25 @@ public class Course {
     @Column(nullable = false, unique = true,length = 100)
     private String alias;
 
-//    private Category catId; // category Id gets from Category
     @Column(columnDefinition = "TEXT")
     private String description;
 
-//    private Instructor insId;  // instructor Id gets from Instructor
-//    private Category id;
+    private boolean isDeleted;
 
-      private boolean isDeleted;
+    private boolean isFree;
 
-      private boolean isFree;
+    @Column(length = 100)
+    private String thumbnail;
 
-      @Column(length = 100)
-      private String thumbnail;
+    @Column(length = 120)
+    private String title;
 
-      @Column(length = 120)
-      private String title;
+    @ManyToOne
+    private Instructor instructor;
 
-      @ManyToOne
-      private Instructor instructor;
+    @ManyToOne
+    private Category category;
 
-      @ManyToOne
-      private Category category;
-
-      @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-      private List<Enrollment> enrollments;
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Enrollment> enrollments;
 }
