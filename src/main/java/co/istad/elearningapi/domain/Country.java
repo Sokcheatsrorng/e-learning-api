@@ -26,7 +26,7 @@ public class Country {
     @Column(nullable = false, length = 60)
     private String name;
 
-    private String nicename;
+    private String niceName;
 
     @Column(nullable = false)
     private int numberCode;
