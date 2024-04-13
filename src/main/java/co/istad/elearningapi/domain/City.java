@@ -24,7 +24,6 @@ public class City {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "country_id")
     private Country country;
 
     @OneToMany(mappedBy = "city")

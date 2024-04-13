@@ -26,7 +26,7 @@ public class Country {
     @Column(nullable = false, length = 60)
     private String name;
 
-    private String nicename;
+    private String niceName;
 
     @Column(nullable = false)
     private int numberCode;
@@ -34,7 +34,7 @@ public class Country {
     @Column(nullable = false)
     private String phoneCode;
 
-    @OneToMany(mappedBy = "country")
+    @OneToMany
     private List<City> cities;
 
     @OneToMany(mappedBy = "country")
