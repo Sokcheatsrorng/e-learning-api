@@ -2,6 +2,7 @@ package co.istad.elearningapi.features.course;
 
 import co.istad.elearningapi.domain.Course;
 import co.istad.elearningapi.features.course.dto.CourseDetailsResponse;
+import co.istad.elearningapi.features.course.dto.CourseUpdateRequest;
 import co.istad.elearningapi.mapper.CourseMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,5 +31,22 @@ public class CourseServiceImpl implements CourseService{
                 );
 
         return courseMapper.toCourseDetailsResponse(course);
+    }
+
+    @Override
+    public void updateCourseByAlias(String alias, CourseUpdateRequest request) {
+        Course course = courseRepository.findByAlias(alias)
+                .orElseThrow(
+                        () -> new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Course has not been found!"
+                        )
+                );
+
+        course.setTitle(request.title());
+        course.setDescription(request.description());
+
+        courseRepository.save(course);
+
     }
 }

@@ -2,11 +2,9 @@ package co.istad.elearningapi.features.course;
 
 
 import co.istad.elearningapi.features.course.dto.CourseDetailsResponse;
+import co.istad.elearningapi.features.course.dto.CourseUpdateRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,6 +16,12 @@ public class CourseController {
     @GetMapping("/{alias}")
     CourseDetailsResponse findByAlias(@PathVariable String alias){
         return courseService.findCourseDetailsByAlias(alias);
+    }
+
+    @PutMapping("/{alias}")
+    void updateByAlias(@PathVariable String alias,
+                       @RequestBody CourseUpdateRequest request){
+        courseService.updateCourseByAlias(alias, request);
     }
 
 }
