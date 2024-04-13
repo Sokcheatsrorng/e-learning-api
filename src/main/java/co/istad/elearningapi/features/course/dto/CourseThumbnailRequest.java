@@ -1,4 +1,8 @@
 package co.istad.elearningapi.features.course.dto;
 
-public record CourseThumbnailRequest() {
+public record CourseThumbnailRequest(
+
+        String thumbnail
+
+) {
 }

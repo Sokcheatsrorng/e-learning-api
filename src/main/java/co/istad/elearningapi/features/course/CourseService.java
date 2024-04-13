@@ -8,4 +8,5 @@ public interface CourseService {
     CourseDetailsResponse findCourseDetailsByAlias(String alias);
     void updateCourseByAlias(String alias, CourseUpdateRequest request);
 
+    String updateCourseThumbnail(String alias, String thumbnail);
 }
