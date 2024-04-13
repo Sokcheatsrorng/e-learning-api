@@ -1,5 +1,6 @@
 package co.istad.elearningapi.util;
 
+
 public class MediaUtil {
 
     public static String extractExtension(String mediaName) {
