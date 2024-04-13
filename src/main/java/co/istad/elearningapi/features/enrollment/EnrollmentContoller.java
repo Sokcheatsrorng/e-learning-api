@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/enrollment")
+@RequestMapping("/api/v1/enrollments")
 
 public class EnrollmentContoller {
     private final EnrollmentService enrollmentService;

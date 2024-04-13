@@ -55,11 +55,11 @@ public class DataInit {
             userRole.setAuthorities(Arrays.asList(userRead, userWrite, userDelete, userUpdate));
 
             Role studentRole = new Role();
-            studentRole.setName("CUSTOMER");
+            studentRole.setName("STUDENT");
             studentRole.setAuthorities(Arrays.asList(progressRead, progressWrite));
 
             Role instructorRole = new Role();
-            instructorRole.setName("STAFF");
+            instructorRole.setName("INSTRUCTOR");
             instructorRole.setAuthorities(Arrays.asList(progressRead, progressWrite, eLearningRead, eLearningWrite));
 
             Role adminRole = new Role();
