@@ -11,4 +11,5 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     boolean existsByAlias(String alias);
 
+
 }

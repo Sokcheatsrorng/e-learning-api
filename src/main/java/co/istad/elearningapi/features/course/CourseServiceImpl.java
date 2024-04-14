@@ -1,6 +1,7 @@
 package co.istad.elearningapi.features.course;
 
 import co.istad.elearningapi.domain.Course;
+import co.istad.elearningapi.features.course.dto.CourseCreateRequest;
 import co.istad.elearningapi.features.course.dto.CourseDetailsResponse;
 import co.istad.elearningapi.features.course.dto.CourseUpdateRequest;
 import co.istad.elearningapi.mapper.CourseMapper;
@@ -73,4 +74,11 @@ public class CourseServiceImpl implements CourseService{
 
         return mediaBaseUri + "IMAGE/" + thumbnail;
     }
+
+    @Override
+    public void createNewCourse(CourseCreateRequest request) {
+
+
+    }
+
 }
