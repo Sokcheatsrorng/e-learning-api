@@ -56,7 +56,7 @@ public class DataInit {
 
             Role studentRole = new Role();
             studentRole.setName("STUDENT");
-            studentRole.setAuthorities(Arrays.asList(progressRead, progressWrite));
+            studentRole.setAuthorities(Arrays.asList(progressWrite));
 
             Role instructorRole = new Role();
             instructorRole.setName("INSTRUCTOR");

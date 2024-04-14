@@ -1,5 +1,7 @@
 package co.istad.elearningapi.features.user;
 
+import co.istad.elearningapi.base.BaseMessage;
+import co.istad.elearningapi.features.user.dto.RoleResponse;
 import co.istad.elearningapi.features.user.dto.UserDetailsResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -7,8 +9,7 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 
 public interface UserService {
-    Page<UserDetailsResponse> findAll(int page, int size,
-                                      Sort sort,
+    List<UserDetailsResponse> findAll(Sort sort,
                                       String username,
                                       String email,
                                       String nationalIdCard,
@@ -16,4 +17,15 @@ public interface UserService {
                                       String name,
                                       String gender,
                                       String role);
+
+    UserDetailsResponse findUserDetailsByUsername(String username);
+
+    BaseMessage disableUserByUsername(String username);
+    BaseMessage enableUserByUsername(String username);
+
+    void deleteUserByUsername(String username);
+
+    List<RoleResponse> findAllRoles();
+
+    RoleResponse findRoleByName(String name);
 }
