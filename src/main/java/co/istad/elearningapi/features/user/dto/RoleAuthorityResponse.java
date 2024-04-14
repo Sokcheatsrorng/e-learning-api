@@ -3,7 +3,6 @@ package co.istad.elearningapi.features.user.dto;
 import java.util.List;
 
 public record RoleAuthorityResponse(
-        String name,
-        List<RoleResponse> roles
+        String name
 ) {
 }

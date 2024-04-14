@@ -1,14 +1,14 @@
 package co.istad.elearningapi.features.user;
 
 
+import co.istad.elearningapi.base.BaseMessage;
 import co.istad.elearningapi.features.user.dto.UserDetailsResponse;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    Page<UserDetailsResponse> findAll(
+    List<UserDetailsResponse> findAll(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "5") int size,
             @RequestParam(required = false, defaultValue = "") String sort,
@@ -41,8 +41,6 @@ public class UserController {
         // Construct Sort object based on the sort parameter
         Sort sortObject = Sort.by(direction, "id");
         return userService.findAll(
-                page,
-                size,
                 sortObject,
                 username,
                 email,
@@ -52,5 +50,30 @@ public class UserController {
                 gender,
                 role);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{username}")
+    UserDetailsResponse findUserByUsername(@PathVariable String username) {
+        return userService.findUserDetailsByUsername(username);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/{username}/disable")
+    BaseMessage disableUserByUsername(@PathVariable String username) {
+        return userService.disableUserByUsername(username);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/{username}/enable")
+    BaseMessage enableUserByUsername(@PathVariable String username) {
+        return userService.enableUserByUsername(username);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{username}")
+    void deleteUserByUsername(@PathVariable String username){
+        userService.deleteUserByUsername(username);
+    }
+
 
 }

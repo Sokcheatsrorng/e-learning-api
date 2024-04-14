@@ -1,6 +1,9 @@
 package co.istad.elearningapi.features.user.dto;
 
+import java.util.List;
+
 public record RoleResponse(
-        String name
+        String name,
+        List<RoleAuthorityResponse> authorities
 ) {
 }
