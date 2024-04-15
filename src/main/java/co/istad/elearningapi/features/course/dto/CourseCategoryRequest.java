@@ -4,8 +4,7 @@ import co.istad.elearningapi.features.category.dto.CategoryResponse;
 
 public record CourseCategoryRequest(
 
-        String alias,
-        String name
+        String alias
 
 ) {
 }

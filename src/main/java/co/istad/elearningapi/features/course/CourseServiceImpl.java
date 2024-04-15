@@ -89,7 +89,6 @@ public class CourseServiceImpl implements CourseService{
                 );
         Category category = new Category();
         category.setAlias(request.alias());
-        category.setName(request.name());
 
         course.setCategory(category);
 
