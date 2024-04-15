@@ -1,7 +1,10 @@
 package co.istad.elearningapi.features.course.dto;
 
-import jakarta.validation.constraints.NotNull;
+import co.istad.elearningapi.features.category.dto.CategoryResponse;
 
 public record CourseCategoryRequest(
+
+        String alias
+
 ) {
 }

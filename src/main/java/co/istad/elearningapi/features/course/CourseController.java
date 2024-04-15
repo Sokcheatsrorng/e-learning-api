@@ -3,6 +3,7 @@ package co.istad.elearningapi.features.course;
 
 import co.istad.elearningapi.base.BaseMessage;
 import co.istad.elearningapi.base.BaseResponse;
+import co.istad.elearningapi.features.course.dto.CourseCategoryRequest;
 import co.istad.elearningapi.features.course.dto.CourseCreateRequest;
 import co.istad.elearningapi.features.course.dto.CourseDetailsResponse;
 import co.istad.elearningapi.features.course.dto.CourseThumbnailRequest;
@@ -42,6 +43,16 @@ public class CourseController {
     @PostMapping
     void createNewCourse(@RequestBody CourseCreateRequest request){
         courseService.createNewCourse(request);
+    }
+
+    @PutMapping("/{alias}/categories")
+    void updateCategoriesByAlias(@PathVariable String alias, @RequestBody CourseCategoryRequest request){
+        courseService.updateCourseCategoriesByAlias(alias, request);
+    }
+
+    @PutMapping("/{alias}/disable")
+    BaseMessage disableCourse(@PathVariable String alias){
+        return courseService.disableCourseByAlias(alias);
     }
 
 }
