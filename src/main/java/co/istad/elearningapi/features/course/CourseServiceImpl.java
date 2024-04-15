@@ -1,6 +1,9 @@
 package co.istad.elearningapi.features.course;
 
+import co.istad.elearningapi.base.BaseMessage;
+import co.istad.elearningapi.domain.Category;
 import co.istad.elearningapi.domain.Course;
+import co.istad.elearningapi.features.course.dto.CourseCategoryRequest;
 import co.istad.elearningapi.features.course.dto.CourseDetailsResponse;
 import co.istad.elearningapi.features.course.dto.CourseUpdateRequest;
 import co.istad.elearningapi.mapper.CourseMapper;
@@ -72,5 +75,40 @@ public class CourseServiceImpl implements CourseService{
         courseRepository.save(course);
 
         return mediaBaseUri + "IMAGE/" + thumbnail;
+    }
+
+    @Override
+    public void updateCourseCategoriesByAlias(String alias, CourseCategoryRequest request) {
+
+        Course course = courseRepository.findByAlias(alias)
+                .orElseThrow(
+                        () -> new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Course has not been found"
+                        )
+                );
+        Category category = new Category();
+        category.setAlias(request.alias());
+        category.setName(request.name());
+
+        course.setCategory(category);
+
+        courseRepository.save(course);
+
+    }
+
+    @Override
+    public BaseMessage disableCourseByAlias(String alias) {
+
+        if (!courseRepository.existsByAlias(alias)){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Course has not been found"
+            );
+        }
+
+        courseRepository.disableCourseByAlias(alias);
+
+        return new BaseMessage("Course has been disabled");
     }
 }

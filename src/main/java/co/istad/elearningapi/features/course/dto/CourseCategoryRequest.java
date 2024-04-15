@@ -1,4 +1,11 @@
 package co.istad.elearningapi.features.course.dto;
 
-public record CourseCategoryRequest() {
+import co.istad.elearningapi.features.category.dto.CategoryResponse;
+
+public record CourseCategoryRequest(
+
+        String alias,
+        String name
+
+) {
 }
