@@ -1,9 +1,12 @@
 package co.istad.elearningapi.features.course;
 
+import co.istad.elearningapi.domain.Category;
 import co.istad.elearningapi.domain.Course;
+import co.istad.elearningapi.domain.Instructor;
 import co.istad.elearningapi.features.course.dto.CourseCreateRequest;
 import co.istad.elearningapi.features.course.dto.CourseDetailsResponse;
 import co.istad.elearningapi.features.course.dto.CourseUpdateRequest;
+import co.istad.elearningapi.features.instructor.InstructorRepository;
 import co.istad.elearningapi.mapper.CourseMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 
 //@Service
@@ -22,6 +27,7 @@ public class CourseServiceImpl implements CourseService{
 
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
+    private final InstructorRepository instructorRepository;
 
     @Value("${MEDIA_BASE_URI}")
     private String mediaBaseUri;
@@ -77,7 +83,31 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public void createNewCourse(CourseCreateRequest request) {
+        // check if user is instructor
+        Instructor instructor = instructorRepository.findById(request.instructorId()).orElseThrow(()->
+                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Instructor has not been found!")
+        );
+        if(instructor.isBlocked()){
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                  "Instructor has been blocked!");
+        }
 
+        Course course = new Course();
+        course.setAlias(request.alias());
+        course.setDescription(request.description());
+        course.setTitle(request.title());
+        course.setThumbnail(request.thumbnail());
+        course.setDeleted(false);
+//        course.setCategory(request.categoryId());
+        course.setInstructor(instructor);
+        courseRepository.save(course);
+
+        Instructor instructors = new Instructor();
+        instructors.setWebsite(instructor.getWebsite());
+
+        instructors.setGithub(instructors.getGithub());
+        instructors.setBiography(instructors.getBiography());
+        instructorRepository.save(instructors);
 
     }
 

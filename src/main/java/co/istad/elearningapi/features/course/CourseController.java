@@ -3,10 +3,12 @@ package co.istad.elearningapi.features.course;
 
 import co.istad.elearningapi.base.BaseMessage;
 import co.istad.elearningapi.base.BaseResponse;
+import co.istad.elearningapi.features.course.dto.CourseCreateRequest;
 import co.istad.elearningapi.features.course.dto.CourseDetailsResponse;
 import co.istad.elearningapi.features.course.dto.CourseThumbnailRequest;
 import co.istad.elearningapi.features.course.dto.CourseUpdateRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -35,6 +37,11 @@ public class CourseController {
         return BaseResponse.builder()
                 .payload(newThumbnail)
                 .build();
+    }
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    void createNewCourse(@RequestBody CourseCreateRequest request){
+        courseService.createNewCourse(request);
     }
 
 }
