@@ -6,7 +6,6 @@ public record CourseCreateRequest(
         String alias ,
         @NotNull(message = "Description is required")
         String description,
-        boolean isDeleted,
         boolean isFree,
         String thumbnail,
         @NotNull(message = "Instructor is required")

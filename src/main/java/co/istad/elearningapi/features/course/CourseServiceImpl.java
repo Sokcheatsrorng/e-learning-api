@@ -4,6 +4,7 @@ import co.istad.elearningapi.base.BaseMessage;
 import co.istad.elearningapi.domain.Category;
 import co.istad.elearningapi.domain.Course;
 import co.istad.elearningapi.domain.Instructor;
+import co.istad.elearningapi.features.category.CategoryRepository;
 import co.istad.elearningapi.features.course.dto.*;
 import co.istad.elearningapi.features.instructor.InstructorRepository;
 import co.istad.elearningapi.mapper.CourseMapper;
@@ -28,6 +29,7 @@ public class CourseServiceImpl implements CourseService{
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
     private final InstructorRepository instructorRepository;
+    private final CategoryRepository categoryRepository;
 
     @Value("${MEDIA_BASE_URI}")
     private String mediaBaseUri;
@@ -91,8 +93,13 @@ public class CourseServiceImpl implements CourseService{
                                 "Course has not been found"
                         )
                 );
-        Category category = new Category();
-        category.setAlias(request.alias());
+        Category category = categoryRepository.findByAlias(request.alias())
+                        .orElseThrow(
+                                () -> new ResponseStatusException(
+                                        HttpStatus.NOT_FOUND,
+                                        "Category has not been found"
+                                )
+                        );
 
         course.setCategory(category);
 
@@ -125,35 +132,34 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public void createNewCourse(CourseCreateRequest request) {
-        // check if user is instructor
-        Instructor instructor = instructorRepository.findById(request.instructorId()).orElseThrow(()->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Instructor has not been found!")
-        );
-        // if instructor is blocked
-        if(instructor.isBlocked()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "Instructor has been blocked!");
+        // Check if the instructor exists and is not blocked
+        Instructor instructor = instructorRepository.findById(request.instructorId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Instructor not found"));
+
+        if (instructor.isBlocked()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Instructor is blocked");
         }
-        Instructor instructors = new Instructor();
-        instructors.setWebsite(instructor.getWebsite());
 
-        instructors.setGithub(instructor.getGithub());
-        instructors.setBiography(instructor.getBiography());
-        instructorRepository.save(instructors);
+        // Retrieve the category from the database or create a new one if needed
+        Category category = categoryRepository.findById(request.categoryId())
+                .orElseGet(() -> {
+                    Category newCategory = new Category();
+                    newCategory.setId(request.categoryId());
+                    // You might want to set other properties of the category here
+                    return categoryRepository.save(newCategory);
+                });
 
-        Category category = new Category();
-        category.setId(request.categoryId());
-
+        // Create the course
         Course course = new Course();
         course.setAlias(request.alias());
         course.setDescription(request.description());
         course.setTitle(request.title());
-        course.setThumbnail(mediaBaseUri + "IMAGE/" +request.thumbnail());
+        course.setThumbnail(mediaBaseUri + "IMAGE/" + request.thumbnail());
         course.setDeleted(false);
         course.setCategory(category);
         course.setInstructor(instructor);
         courseRepository.save(course);
-
     }
+
 
 }
