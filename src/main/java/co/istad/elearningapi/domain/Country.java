@@ -34,7 +34,7 @@ public class Country {
     @Column(nullable = false)
     private String phoneCode;
 
-    @OneToMany
+    @OneToMany(mappedBy = "country")
     private List<City> cities;
 
     @OneToMany(mappedBy = "country")

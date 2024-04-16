@@ -2,6 +2,7 @@ package co.istad.elearningapi.features.enrollment;
 
 import co.istad.elearningapi.domain.Enrollment;
 import co.istad.elearningapi.features.enrollment.dto.EnrollmentCreateRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ public class EnrollmentContoller {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    void createEnrollment(@RequestBody EnrollmentCreateRequest enrollmentCreateRequest) {
-//        enrollmentService.createEnrollment(enrollmentCreateRequest);
+    void createEnrollment(@Valid  @RequestBody EnrollmentCreateRequest enrollmentCreateRequest) {
+        enrollmentService.createNewEnrollment(enrollmentCreateRequest);
     }
 }

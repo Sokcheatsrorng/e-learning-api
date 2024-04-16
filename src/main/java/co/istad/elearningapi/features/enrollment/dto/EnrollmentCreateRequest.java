@@ -7,12 +7,11 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalTime;
 
 public record EnrollmentCreateRequest(
-        @NotNull(message = "Code is required")
-        String code,
+
         LocalTime enrollmentAt,
         boolean isDeleted,
         int progress,
         Student student,
-        Course course
+        String courseAlias
 ) {
 }
