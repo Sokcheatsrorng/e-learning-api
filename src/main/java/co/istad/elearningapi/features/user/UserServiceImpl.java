@@ -107,4 +107,64 @@ public class UserServiceImpl implements UserService {
         return new BaseMessage("User has been disabled");
     }
 
+    @Transactional
+    @Override
+    public BaseMessage enableUserByUsername(String username) {
+
+        if (!userRepository.existsByUsername(username)){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "User has not been found!"
+            );
+        }
+        userRepository.enableUserByUsername(username);
+
+        return new BaseMessage("User has been disabled");
+    }
+
+    @Override
+    public void deleteUserByUsername(String username) {
+        if (!userRepository.existsByUsername(username)){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "User has not been found!"
+            );
+        }
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(
+                        () -> new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "User has not been found!"
+                        )
+                );
+        userRepository.delete(user);
+
+    }
+
+    @Override
+    public List<RoleResponse> findAllRoles() {
+        List<Role> roles = roleRepository.findAll();
+
+
+        return roleMapper.toRoleResponseList(roles);
+    }
+
+    @Override
+    public RoleResponse findRoleByName(String name) {
+        if (!roleRepository.existsByName(name)){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Role has not been found"
+            );
+        }
+        Role role = roleRepository.findByName(name)
+                .orElseThrow(
+                        () -> new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Role has not been found!"
+                        )
+                );
+        return roleMapper.toRoleResponse(role);
+    }
 }

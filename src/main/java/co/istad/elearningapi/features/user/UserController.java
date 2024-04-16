@@ -63,5 +63,17 @@ public class UserController {
         return userService.disableUserByUsername(username);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/{username}/enable")
+    BaseMessage enableUserByUsername(@PathVariable String username) {
+        return userService.enableUserByUsername(username);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{username}")
+    void deleteUserByUsername(@PathVariable String username){
+        userService.deleteUserByUsername(username);
+    }
+
 
 }
