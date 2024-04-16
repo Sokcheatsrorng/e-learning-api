@@ -11,6 +11,7 @@ public record EnrollmentCreateRequest(
         String code,
         LocalTime enrollmentAt,
         boolean isDeleted,
+        int progress,
         Student student,
         Course course
 ) {

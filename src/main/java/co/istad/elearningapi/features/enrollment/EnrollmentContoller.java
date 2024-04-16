@@ -16,6 +16,6 @@ public class EnrollmentContoller {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     void createEnrollment(@RequestBody EnrollmentCreateRequest enrollmentCreateRequest) {
-        enrollmentService.createEnrollment(enrollmentCreateRequest);
+//        enrollmentService.createEnrollment(enrollmentCreateRequest);
     }
 }
