@@ -109,5 +109,7 @@ public class CourseServiceImpl implements CourseService{
         courseRepository.disableCourseByAlias(alias);
 
         return new BaseMessage("Course has been disabled");
+
     }
+
 }

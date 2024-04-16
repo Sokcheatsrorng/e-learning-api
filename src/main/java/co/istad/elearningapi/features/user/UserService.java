@@ -21,11 +21,5 @@ public interface UserService {
     UserDetailsResponse findUserDetailsByUsername(String username);
 
     BaseMessage disableUserByUsername(String username);
-    BaseMessage enableUserByUsername(String username);
 
-    void deleteUserByUsername(String username);
-
-    List<RoleResponse> findAllRoles();
-
-    RoleResponse findRoleByName(String name);
 }

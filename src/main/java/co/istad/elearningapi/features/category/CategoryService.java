@@ -1,0 +1,13 @@
+package co.istad.elearningapi.features.category;
+
+import co.istad.elearningapi.features.category.dto.CategoryParentResponse;
+import co.istad.elearningapi.features.category.dto.CategoryRequest;
+
+import java.util.List;
+
+public interface CategoryService {
+
+    void createNewCategory(CategoryRequest request);
+
+    List<CategoryParentResponse> findAllParentCategories();
+}

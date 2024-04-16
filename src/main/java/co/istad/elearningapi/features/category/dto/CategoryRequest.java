@@ -4,6 +4,7 @@ public record CategoryRequest(
 
         String alias,
         String name,
-        String icon
+        String icon,
+        Long parentCategoryID
 ) {
 }
