@@ -1,161 +1,60 @@
-package co.istad.elearningapi.features.course;
+package co.istad.elearningapi.features.category;
+
 
 import co.istad.elearningapi.base.BaseMessage;
 import co.istad.elearningapi.domain.Category;
-import co.istad.elearningapi.domain.Course;
-import co.istad.elearningapi.features.course.dto.CourseCategoryRequest;
-import co.istad.elearningapi.features.course.dto.CourseDetailsResponse;
-import co.istad.elearningapi.features.course.dto.CourseUpdateRequest;
-import co.istad.elearningapi.mapper.CourseMapper;
-import jakarta.validation.Valid;
+import co.istad.elearningapi.features.category.dto.CategoryCreateRequest;
+import co.istad.elearningapi.features.category.dto.CategoryResponse;
+import co.istad.elearningapi.features.category.dto.CategoryUpdateRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import java.util.Optional;
 
-
-//@Service
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CourseServiceImpl implements CourseService{
-
-    private final CourseRepository courseRepository;
-    private final CourseMapper courseMapper;
-    private final InstructorRepository instructorRepository;
+public class CategoryServiceimpl implements CategoryService{
+    private final CategoryRepository categoryRepository;
 
     @Value("${MEDIA_BASE_URI}")
     private String mediaBaseUri;
 
-
+    @Transactional
     @Override
-    public CourseDetailsResponse findCourseDetailsByAlias(String alias) {
-
-        Course course = courseRepository.findByAlias(alias)
-                .orElseThrow(
-                        () -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Course has not been found!"
-                        )
-                );
-
-        return courseMapper.toCourseDetailResponse(course);
-    }
-
-    @Override
-    public void updateCourseByAlias(String alias, CourseUpdateRequest request) {
-        Course course = courseRepository.findByAlias(alias)
-                .orElseThrow(
-                        () -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Course has not been found!"
-                        )
-                );
-
-        course.setTitle(request.title());
-        course.setDescription(request.description());
-
-        courseRepository.save(course);
-
-    }
-
-    @Override
-    public String updateCourseThumbnail(String alias, String thumbnail) {
-
-        Course course = courseRepository.findByAlias(alias)
-                .orElseThrow(
-                        () -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Course has not been found"
-                        )
-                );
-
-        course.setThumbnail(thumbnail);
-        courseRepository.save(course);
-
-        return mediaBaseUri + "IMAGE/" + thumbnail;
-    }
-
-    @Override
-    public void updateCourseCategoriesByAlias(String alias, CourseCategoryRequest request) {
-
-        Course course = courseRepository.findByAlias(alias)
-                .orElseThrow(
-                        () -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Course has not been found"
-                        )
-                );
-        Category category = new Category();
-        category.setAlias(request.alias());
-
-        course.setCategory(category);
-
-        courseRepository.save(course);
-
-    }
-
-    @Override
-    public BaseMessage disableCourseByAlias(String alias) {
-
-        if (!courseRepository.existsByAlias(alias)){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Course has not been found"
-            );
+    public BaseMessage isDisableCategory(String alias) {
+        if(!categoryRepository.existsByAlias(alias)){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "This category not found!");
         }
 
-        courseRepository.disableCourseByAlias(alias);
+        categoryRepository.disableCategoryByAlias(alias);
+        return new BaseMessage("Category has been disabled");
+    }
 
-        return new BaseMessage("Course has been disabled");
+    @Override
+    public void createCategory(CategoryCreateRequest categoryCreateRequest) {
 
     }
 
     @Override
-    public Page<CourseDetailsResponse> getAllCourses(int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page,size);
-        Page <Course> coursePage = courseRepository.findAll(pageRequest);
+    public void updateCategoryByAlias(String alias, CategoryUpdateRequest updateRequest){
 
-        return coursePage.map(courseMapper::toCourseDetailResponse);
+        Category category = categoryRepository.findByAlias(alias).orElseThrow(()->
+                new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "This category not found!"));
+
+        category.setAlias(updateRequest.alias());
+        category.setName(updateRequest.name());
+        category.setIcon(mediaBaseUri + "IMAGE/" + updateRequest.icon());
+        categoryRepository.save(category);
     }
 
-    @Override
-    public void createNewCourse(CourseCreateRequest request) {
-        // check if user is instructor
-        Instructor instructor = instructorRepository.findById(request.instructorId()).orElseThrow(()->
-                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Instructor has not been found!")
-        );
-        // if instructor is blocked
-        if(instructor.isBlocked()){
-          throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                  "Instructor has been blocked!");
-        }
-        Instructor instructors = new Instructor();
-        instructors.setWebsite(instructor.getWebsite());
-
-        instructors.setGithub(instructor.getGithub());
-        instructors.setBiography(instructor.getBiography());
-        instructorRepository.save(instructors);
-
-        Category category = new Category();
-        category.setId(request.categoryId());
-
-        Course course = new Course();
-        course.setAlias(request.alias());
-        course.setDescription(request.description());
-        course.setTitle(request.title());
-        course.setThumbnail(mediaBaseUri + "IMAGE/" +request.thumbnail());
-        course.setDeleted(false);
-        course.setCategory(category);
-        course.setInstructor(instructor);
-        courseRepository.save(course);
-
-    }
 
 }
