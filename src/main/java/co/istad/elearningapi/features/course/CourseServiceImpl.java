@@ -11,9 +11,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 
 //@Service
@@ -24,6 +28,7 @@ public class CourseServiceImpl implements CourseService{
 
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
+    private final InstructorRepository instructorRepository;
 
     @Value("${MEDIA_BASE_URI}")
     private String mediaBaseUri;
@@ -40,7 +45,7 @@ public class CourseServiceImpl implements CourseService{
                         )
                 );
 
-        return courseMapper.toCourseDetailsResponse(course);
+        return courseMapper.toCourseDetailResponse(course);
     }
 
     @Override
@@ -109,6 +114,47 @@ public class CourseServiceImpl implements CourseService{
         courseRepository.disableCourseByAlias(alias);
 
         return new BaseMessage("Course has been disabled");
+
+    }
+
+    @Override
+    public Page<CourseDetailsResponse> getAllCourses(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page,size);
+        Page <Course> coursePage = courseRepository.findAll(pageRequest);
+
+        return coursePage.map(courseMapper::toCourseDetailResponse);
+    }
+
+    @Override
+    public void createNewCourse(CourseCreateRequest request) {
+        // check if user is instructor
+        Instructor instructor = instructorRepository.findById(request.instructorId()).orElseThrow(()->
+                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Instructor has not been found!")
+        );
+        // if instructor is blocked
+        if(instructor.isBlocked()){
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                  "Instructor has been blocked!");
+        }
+        Instructor instructors = new Instructor();
+        instructors.setWebsite(instructor.getWebsite());
+
+        instructors.setGithub(instructor.getGithub());
+        instructors.setBiography(instructor.getBiography());
+        instructorRepository.save(instructors);
+
+        Category category = new Category();
+        category.setId(request.categoryId());
+
+        Course course = new Course();
+        course.setAlias(request.alias());
+        course.setDescription(request.description());
+        course.setTitle(request.title());
+        course.setThumbnail(mediaBaseUri + "IMAGE/" +request.thumbnail());
+        course.setDeleted(false);
+        course.setCategory(category);
+        course.setInstructor(instructor);
+        courseRepository.save(course);
 
     }
 

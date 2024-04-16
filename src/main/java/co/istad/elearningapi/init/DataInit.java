@@ -74,4 +74,7 @@ public class DataInit {
             roleRepository.saveAll(Arrays.asList(userRole, studentRole, instructorRole, adminRole));
         }
     }
+
+    public static class CourseResponse {
+    }
 }

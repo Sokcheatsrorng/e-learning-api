@@ -4,10 +4,13 @@ package co.istad.elearningapi.features.course;
 import co.istad.elearningapi.base.BaseMessage;
 import co.istad.elearningapi.base.BaseResponse;
 import co.istad.elearningapi.features.course.dto.CourseCategoryRequest;
+import co.istad.elearningapi.features.course.dto.CourseCreateRequest;
 import co.istad.elearningapi.features.course.dto.CourseDetailsResponse;
 import co.istad.elearningapi.features.course.dto.CourseThumbnailRequest;
 import co.istad.elearningapi.features.course.dto.CourseUpdateRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -48,4 +51,17 @@ public class CourseController {
         return courseService.disableCourseByAlias(alias);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    void createNewCourse(@RequestBody CourseCreateRequest request){
+        courseService.createNewCourse(request);
+    }
+
+    @GetMapping
+    Page findAllCourse(@RequestParam(required = false, defaultValue = "0") int page,
+                       @RequestParam(required = false, defaultValue = "25") int size
+    ) {
+       return courseService.getAllCourses(page,size);
+
+    }
 }
