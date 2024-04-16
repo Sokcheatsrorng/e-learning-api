@@ -19,18 +19,5 @@ public class EnrollmentServiceImpl implements EnrollmentService{
     private final EnrollmentRepository enrollmentRepository;
     private final EnrollmentMapper enrollmentMapper;
 
-    @Override
-    public void createEnrollment(EnrollmentCreateRequest enrollmentCreateRequest) {
-        Enrollment enrollment = new Enrollment();
-        // if this course isDeleted can't enroll
-        if(enrollment.getCourse().isDeleted()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "This course is deleted!");
-        }
-        enrollment = enrollmentMapper.formEnrollmentCreateRequest(enrollmentCreateRequest);
-        enrollment.setEnrolledAt(LocalTime.now());
-        enrollment.setCode(enrollmentCreateRequest.code());
-        enrollment.setCourse(enrollmentCreateRequest.course());
-        enrollmentRepository.save(enrollment);
-    }
+
 }
