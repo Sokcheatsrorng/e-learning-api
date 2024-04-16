@@ -28,4 +28,12 @@ public class CategoryController {
         return categoryService.findAllParentCategories();
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/{alias}")
+    void updateByAlias(@PathVariable String alias) {
+        categoryService.disableCategoryByAlias(alias);
+    }
+
+
+
 }

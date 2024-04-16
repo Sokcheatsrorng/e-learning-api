@@ -11,6 +11,7 @@ public interface CategoryService {
     void createNewCategory(CategoryRequest request);
 
     List<CategoryParentResponse> findAllParentCategories();
-    BaseMessage isDisableCategory(String alias);
+    BaseMessage disableCategoryByAlias(String alias);
 
+    void updateCategoryByAlias(String alias,CategoryRequest request);
 }
