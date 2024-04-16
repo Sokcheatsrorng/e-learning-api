@@ -14,10 +14,13 @@ import java.time.LocalTime;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-
 public class EnrollmentServiceImpl implements EnrollmentService{
     private final EnrollmentRepository enrollmentRepository;
     private final EnrollmentMapper enrollmentMapper;
 
 
+    @Override
+    public void createEnrollment(EnrollmentCreateRequest enrollmentCreateRequest) {
+
+    }
 }

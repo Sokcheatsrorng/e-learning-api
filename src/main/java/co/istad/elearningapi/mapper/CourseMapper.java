@@ -19,4 +19,5 @@ public interface CourseMapper {
     Course fromCourseCreateRequest(CourseCreateRequest courseCreateRequest);
 
 
+    CourseDetailsResponse toCourseDetailsResponse(Course course);
 }

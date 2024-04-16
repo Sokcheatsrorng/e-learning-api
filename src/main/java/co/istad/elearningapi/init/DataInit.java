@@ -75,6 +75,4 @@ public class DataInit {
         }
     }
 
-    public static class CourseResponse {
-    }
 }
