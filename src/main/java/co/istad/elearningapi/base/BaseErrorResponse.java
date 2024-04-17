@@ -11,6 +11,6 @@ import org.springframework.stereotype.Service;
 @Builder
 public class BaseErrorResponse {
 
-    private BaseError baseError;
+    private BaseError error;
 
 }

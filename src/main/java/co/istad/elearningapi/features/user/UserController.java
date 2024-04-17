@@ -2,7 +2,9 @@ package co.istad.elearningapi.features.user;
 
 
 import co.istad.elearningapi.base.BaseMessage;
+import co.istad.elearningapi.features.user.dto.UserCreateRequest;
 import co.istad.elearningapi.features.user.dto.UserDetailsResponse;
+import jakarta.validation.Valid;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -63,7 +65,11 @@ public class UserController {
         return userService.disableUserByUsername(username);
     }
 
-
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    UserDetailsResponse createUser(@Valid @RequestBody UserCreateRequest userCreateRequest){
+        return userService.createUser(userCreateRequest);
+    }
 
 
 }

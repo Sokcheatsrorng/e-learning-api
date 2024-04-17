@@ -72,6 +72,7 @@ public class DataInit {
 
             // Save roles
             roleRepository.saveAll(Arrays.asList(userRole, studentRole, instructorRole, adminRole));
+
         }
     }
 
