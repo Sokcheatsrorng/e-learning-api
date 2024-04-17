@@ -4,6 +4,7 @@ import co.istad.elearningapi.base.BaseMessage;
 import co.istad.elearningapi.domain.Category;
 import co.istad.elearningapi.features.category.dto.CategoryParentResponse;
 import co.istad.elearningapi.features.category.dto.CategoryRequest;
+import co.istad.elearningapi.mapper.CategoryMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.resource.transaction.backend.jta.internal.JtaTransactionAdapter;
@@ -13,8 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-
-
+import java.util.stream.Collectors;
 
 
 @Service
@@ -23,6 +23,7 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService{
 
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
     @Value("${MEDIA_BASE_URI}")
     private String mediaBaseUri;
@@ -47,7 +48,13 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public List<CategoryParentResponse> findAllParentCategories() {
-        return null;
+
+        List<Category> categories = categoryRepository.findAll()
+                .stream()
+                .filter(category -> category.getParentCategory() == null)
+                .collect(Collectors.toList());
+
+        return categoryMapper.toCategoryParentResponseList(categories);
     }
 
     @Override

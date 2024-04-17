@@ -29,10 +29,17 @@ public class Category {
 
     private boolean isDeleted;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "parent_category_id")
     private Category parentCategory;
 
+    @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL)
+    private List<Category> children;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Course> courses;
+
+
+
+
 }

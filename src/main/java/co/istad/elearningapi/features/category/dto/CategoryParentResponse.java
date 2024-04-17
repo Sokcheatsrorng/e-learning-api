@@ -1,12 +1,12 @@
 package co.istad.elearningapi.features.category.dto;
 
-import co.istad.elearningapi.features.category.dto.CategoryResponse;
-import lombok.*;
+
+import java.util.List;
 
 public record CategoryParentResponse(
         String alias,
         String name,
         String icon,
-        CategoryResponse category
+        List<CategoryResponse> categories
 ) {
 }

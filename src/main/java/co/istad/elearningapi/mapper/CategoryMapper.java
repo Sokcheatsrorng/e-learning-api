@@ -8,9 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
@@ -30,6 +28,7 @@ public interface CategoryMapper {
         return category;
     }
 
-    List<CategoryParentResponse> toCategoryParentResponseList(List<Category> category);
+    @Mapping(target = "categories", source = "children")
+    List<CategoryParentResponse> toCategoryParentResponseList(List<Category> categories);
 
 }

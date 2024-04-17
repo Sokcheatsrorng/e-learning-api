@@ -36,7 +36,7 @@ public class UserController {
     ) {
         Sort.Direction direction = Sort.Direction.ASC;
         String[] sortParams = sort.split(":");
-        if (sortParams.length == 2 && sortParams[1].equalsIgnoreCase("desc")) {
+        if (sortParams.length == 2 && sortParams[1].equalsIgnoreCase("asc")) {
             direction = Sort.Direction.DESC;
         }
 
