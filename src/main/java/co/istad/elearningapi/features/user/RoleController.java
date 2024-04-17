@@ -18,6 +18,14 @@ public class RoleController {
 
     private final UserService userService;
     private final UserMapper userMapper;
+    @GetMapping
+    List<RoleResponse> findAllRole(){
+        return userService.findAllRoles();
+    }
+    @GetMapping("/{name}")
+    RoleResponse findRoleByName(@PathVariable String name){
+        return userService.findRoleByName(name);
+    }
 
 
 }

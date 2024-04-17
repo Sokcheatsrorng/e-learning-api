@@ -21,6 +21,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void disableByUsername(String username);
 
     @Modifying
-    @Query("UPDATE User as u SET u.isDeleted = FALSE WHERE u.username = ?1")
+    @Query("UPDATE User u SET u.isDeleted = false WHERE u.username = ?1")
     void enableUserByUsername(String username);
 }

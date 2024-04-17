@@ -22,4 +22,10 @@ public interface UserService {
 
     BaseMessage disableUserByUsername(String username);
 
+    BaseMessage enableUserByUsername(String username);
+    // deleted user
+    void deleteUerByUserName(String username);
+    List<RoleResponse> findAllRoles();
+    RoleResponse findRoleByName(String name);
+
 }
