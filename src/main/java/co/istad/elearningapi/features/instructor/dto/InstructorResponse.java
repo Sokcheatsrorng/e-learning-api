@@ -11,6 +11,7 @@ public record InstructorResponse(
     String jobTitle,
     String linkedIn,
     String website,
-    List<CourseResponse> courses
+    List<CourseResponse> courses,
+    UserDetailsResponse userDetailsResponse
 ) {
 }

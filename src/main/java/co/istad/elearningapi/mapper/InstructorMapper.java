@@ -11,5 +11,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface InstructorMapper {
     Instructor fromInstructorCreateRequest(InstructorCreateRequest instructorCreateRequest);
-
+    List<InstructorResponse> toInstructorResponseList(List<Instructor> instructors);
+    @Mapping(source = "user", target = "userDetailsResponse")
+    InstructorResponse toInstructorResponse(Instructor instructor);
 }

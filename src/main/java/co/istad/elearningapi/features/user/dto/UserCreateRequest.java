@@ -18,6 +18,7 @@ public record UserCreateRequest(
         @Size(max = 30, message = "Phone number must less than 30 characters")
         String phoneNumber,
 
+        @NotNull
         @NotBlank(message = "Password is required")
         String password,
 

@@ -5,27 +5,28 @@ import co.istad.elearningapi.domain.Role;
 import co.istad.elearningapi.domain.User;
 import co.istad.elearningapi.features.instructor.dto.InstructorCreateRequest;
 import co.istad.elearningapi.features.instructor.dto.InstructorResponse;
+import co.istad.elearningapi.features.instructor.dto.InstructorUpdateRequest;
 import co.istad.elearningapi.features.user.RoleRepository;
 import co.istad.elearningapi.features.user.UserRepository;
-import co.istad.elearningapi.features.user.dto.UserCreateRequest;
+import co.istad.elearningapi.features.user.dto.UserDetailsResponse;
+import co.istad.elearningapi.features.user.dto.UserResponse;
 import co.istad.elearningapi.mapper.InstructorMapper;
-import co.istad.elearningapi.mapper.UserMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class InstructorServiceImpl implements InstructorService{
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
     private final RoleRepository roleRepository;
     private final InstructorMapper instructorMapper;
     private final InstructorRepository instructorRepository;
@@ -77,16 +78,33 @@ public class InstructorServiceImpl implements InstructorService{
 
     @Override
     public Page<InstructorResponse> findList(int page, int limit) {
-        return null;
+        PageRequest pageRequest = PageRequest.of(page, limit);
+
+        Page<Instructor> instructors = instructorRepository.findAll(pageRequest);
+
+        return instructors.map(instructorMapper::toInstructorResponse);
     }
 
     @Override
-    public InstructorResponse findProfileByUsername(String username) {
-        return null;
+    public UserResponse findProfileByUsername(String username) {
+        User foundUser = userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "Username has not been found!"
+                        ));
+
+        return new UserResponse(foundUser.getUsername(),foundUser.getProfile());
     }
 
     @Override
-    public void updateProfile(String username, String mediaName) {
+    public void updateProfile(String username, InstructorUpdateRequest instructorUpdateRequest) {
+        User foundUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> (
+                        new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "Username has not been found!" )
+                ));
 
+        foundUser.setProfile(instructorUpdateRequest.mediaName());
+        userRepository.save(foundUser);
     }
 }
