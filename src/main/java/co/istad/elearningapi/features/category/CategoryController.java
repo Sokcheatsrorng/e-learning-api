@@ -27,8 +27,8 @@ public class CategoryController {
         categoryService.createNewCategory(categoryRequest);
     }
     @GetMapping("/{alias}")
-    CategoryResponse findAllCategoryByAlias(@PathVariable String alias ){
-        return categoryService.findAllCategoryByAlias(alias);
+    CategoryResponse findCategoryByAlias(@PathVariable String alias ){
+        return categoryService.findCategoryByAlias(alias);
     }
     @GetMapping
     Page<CategoryResponse> findAllCategoriesByPagination(
@@ -36,15 +36,6 @@ public class CategoryController {
             @RequestParam(required = false,defaultValue = "25") int size
     ){
         return categoryService.findAllCategoriesByPagination(page,size);
-    }
-    @GetMapping("/{parentId}/subcategories")
-    public ResponseEntity<List<Category>> getSubCategories(@PathVariable Long parentId) {
-        try {
-            List<Category> subCategories = categoryService.findAllSubCategories(parentId);
-            return ResponseEntity.ok(subCategories);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
     }
     @GetMapping("/parents")
     List<CategoryParentResponse> findAllParentCategories(){

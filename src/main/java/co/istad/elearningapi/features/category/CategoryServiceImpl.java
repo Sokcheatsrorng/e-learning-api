@@ -4,17 +4,23 @@ import co.istad.elearningapi.base.BaseMessage;
 import co.istad.elearningapi.domain.Category;
 import co.istad.elearningapi.features.category.dto.CategoryParentResponse;
 import co.istad.elearningapi.features.category.dto.CategoryRequest;
+import co.istad.elearningapi.features.category.dto.CategoryResponse;
+import co.istad.elearningapi.mapper.CategoryMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.resource.transaction.backend.jta.internal.JtaTransactionAdapter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
-
-
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -23,6 +29,7 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService{
 
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
     @Value("${MEDIA_BASE_URI}")
     private String mediaBaseUri;
@@ -72,7 +79,7 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public CategoryResponse findAllCategoryByAlias(String alias) {
+    public CategoryResponse findCategoryByAlias(String alias) {
         Optional<Category> optionalCategory = categoryRepository.findByAlias(alias);
         Category category = optionalCategory.orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -98,16 +105,6 @@ public class CategoryServiceImpl implements CategoryService{
         Page<Category> accounts = categoryRepository.findAll(pageRequest);
 
         return accounts.map(categoryMapper::toCategoryResponse);
-    }
-
-    @Override
-    public List<Category> findAllSubCategories(Long parentId) {
-        List<Category> directSubCategories =  categoryRepository.findByParentCategoryId(parentId);
-        List<Category> subCategories = new ArrayList<>(directSubCategories);
-        if (subCategories.isEmpty()) {
-            throw new IllegalArgumentException("No sub-categories found for parent ID: " + parentId);
-        }
-        return subCategories;
     }
 
     @Override

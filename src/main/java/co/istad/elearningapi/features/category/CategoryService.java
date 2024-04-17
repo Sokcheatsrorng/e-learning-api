@@ -14,12 +14,9 @@ public interface CategoryService {
     void createNewCategory(CategoryRequest categoryRequest);
 
     List<CategoryParentResponse> findAllParentCategories();
-    CategoryResponse findAllCategoryByAlias(String alias);
+    CategoryResponse findCategoryByAlias(String alias);
     Page<CategoryResponse> findAllCategoriesByPagination(int page, int size);
     // find all subcategory
-    List<Category> findAllSubCategories(Long parentId);
-
-
 
     BaseMessage disableCategoryByAlias(String alias);
 
