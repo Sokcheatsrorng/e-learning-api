@@ -8,5 +8,6 @@ public record CategoryRequest(
         String name,
         String icon,
         Long parentCategoryID
+
 ) {
 }

@@ -7,6 +7,6 @@ public record CategoryParentResponse(
         String alias,
         String name,
         String icon,
-        List<CategoryResponse> categories
+        List<String> categories
 ) {
 }

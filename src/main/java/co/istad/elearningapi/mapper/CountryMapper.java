@@ -1,6 +1,7 @@
 package co.istad.elearningapi.mapper;
 
 import co.istad.elearningapi.domain.Country;
+import co.istad.elearningapi.features.country.dto.CountryDetailsResponse;
 import co.istad.elearningapi.features.country.dto.CountryResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,5 +18,7 @@ public interface CountryMapper {
     default Page<CountryResponse> toCountryResponse(Page<Country> countryPage) {
         return countryPage.map(this::toCountryResponse);
     }
+
+    CountryDetailsResponse toCountryDetailsResponse(Country country);
 
 }

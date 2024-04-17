@@ -42,24 +42,61 @@ public class CategoryServiceImpl implements CategoryService{
             );
         }
 
-        Category category = categoryMapper.fromCategoryRequest(updateRequest);
+        Category category = categoryRepository.findByAlias(alias)
+                        .orElseThrow(
+                                () -> new ResponseStatusException(
+                                        HttpStatus.NOT_FOUND,
+                                        "Category has not been found!"
+                                )
+                        );
+        Category parentCategory = categoryRepository.findById(updateRequest.parentCategoryID())
+                .orElseThrow(
+                        () -> new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Parent Category has not been found"
+                        )
+                );
+        category.setName(updateRequest.name());
+        category.setParentCategory(parentCategory);
+        category.setIcon(updateRequest.icon());
 
         categoryRepository.save(category);
     }
 
     @Override
     public void createNewCategory(CategoryRequest categoryRequest) {
-        // check category exist or not
-        Optional<Category> existingCategoryOptional = categoryRepository.findByAlias(categoryRequest.alias());
-        if (existingCategoryOptional.isPresent()) {
-            throw new IllegalArgumentException("Category with alias " + categoryRequest.alias() + " already exists");
+
+        Category existCategory = categoryRepository.findByAlias(categoryRequest.alias())
+                .orElseThrow(
+                        () -> new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Category has not been found!"
+                        )
+                );
+
+        if (categoryRequest.alias().equals(existCategory.getAlias())){
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Alias has already been exist"
+            );
         }
 
+        Category parentCategory = categoryRepository.findById(categoryRequest.parentCategoryID())
+                .orElseThrow(
+                        () -> new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Parent Category has not been found"
+                        )
+                );
+
         // new category
+//        Long parentID = categoryMapper.fromCategoryRequest(categoryRequest.parentCategoryID());
         Category newCategory = new Category();
         newCategory.setAlias(categoryRequest.alias());
         newCategory.setName(categoryRequest.name());
         newCategory.setIcon(categoryRequest.icon());
+//        newCategory.setParentCategory(categoryRequest.parentCategoryID());
+        newCategory.setParentCategory(parentCategory);
         newCategory.setDeleted(false);
 
         categoryRepository.save(newCategory);

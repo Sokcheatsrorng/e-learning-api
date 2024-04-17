@@ -11,6 +11,7 @@ import co.istad.elearningapi.features.user.UserRepository;
 import co.istad.elearningapi.features.user.dto.UserDetailsResponse;
 import co.istad.elearningapi.features.user.dto.UserResponse;
 import co.istad.elearningapi.mapper.InstructorMapper;
+import co.istad.elearningapi.mapper.UserMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ public class InstructorServiceImpl implements InstructorService{
     private final RoleRepository roleRepository;
     private final InstructorMapper instructorMapper;
     private final InstructorRepository instructorRepository;
+    private final UserMapper userMapper;
 
     @Override
     public void createNew(InstructorCreateRequest instructorCreateRequest) {
@@ -86,14 +88,14 @@ public class InstructorServiceImpl implements InstructorService{
     }
 
     @Override
-    public UserResponse findProfileByUsername(String username) {
+    public UserDetailsResponse findProfileByUsername(String username) {
         User foundUser = userRepository.findByUsername(username)
                 .orElseThrow(() ->
                         new ResponseStatusException(HttpStatus.NOT_FOUND,
                                 "Username has not been found!"
                         ));
 
-        return new UserResponse(foundUser.getUsername(),foundUser.getProfile());
+        return userMapper.toUserDetailsResponse(foundUser);
     }
 
     @Override

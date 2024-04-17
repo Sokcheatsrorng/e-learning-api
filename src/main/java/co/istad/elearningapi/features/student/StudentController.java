@@ -1,6 +1,5 @@
 package co.istad.elearningapi.features.student;
 
-import co.istad.elearningapi.domain.Student;
 import co.istad.elearningapi.features.student.dto.StudentCreateRequest;
 import co.istad.elearningapi.features.student.dto.StudentResponse;
 import co.istad.elearningapi.features.student.dto.StudentUpdateRequest;

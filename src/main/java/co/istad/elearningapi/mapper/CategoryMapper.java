@@ -16,8 +16,8 @@ public interface CategoryMapper {
     CategoryResponse toCategoryResponse(Category category);
 
 //    CategoryMapper INSTANCE = Mappers.getMapper(CategoryMapper.class);
-    @Mapping(target = "parentCategory", source = "request.parentCategoryID", qualifiedByName = "mapParentCategory")
-    Category fromCategoryRequest(CategoryRequest request);
+//    @Mapping(target = "parentCategory", source = "request.parentCategoryID", qualifiedByName = "mapParentCategory")
+//    Category fromCategoryRequest(CategoryRequest request);
     @Named("mapParentCategory")
     default Category mapParentCategory(Long parentId) {
         if (parentId == null) {
@@ -28,7 +28,7 @@ public interface CategoryMapper {
         return category;
     }
 
-    @Mapping(target = "categories", source = "children")
+    @Mapping(target = "categories", source = "categories.name")
     List<CategoryParentResponse> toCategoryParentResponseList(List<Category> categories);
 
 }

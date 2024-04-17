@@ -2,6 +2,7 @@ package co.istad.elearningapi.features.country;
 
 import co.istad.elearningapi.domain.City;
 import co.istad.elearningapi.domain.Country;
+import co.istad.elearningapi.features.country.dto.CountryDetailsResponse;
 import co.istad.elearningapi.features.country.dto.CountryResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class CountryController {
     @GetMapping
     public Page<CountryResponse> findAllCountries(
 
-            @RequestParam(required = false) String name,
+            @RequestParam(required = false, defaultValue = "") String name,
             @RequestParam(
                     value = "page",
                     required = false,
@@ -36,7 +37,7 @@ public class CountryController {
     }
 
     @GetMapping("/{iso}/cities")
-    public List<City> findAllCitiesInCountry(@PathVariable String iso) {
+    public List<CountryDetailsResponse> findAllCitiesInCountry(@PathVariable String iso) {
         return countryService.findAllCitiesInCountry(iso);
     }
 

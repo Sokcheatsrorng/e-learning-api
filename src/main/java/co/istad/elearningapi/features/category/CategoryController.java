@@ -55,6 +55,4 @@ public class CategoryController {
         categoryService.updateCategoryByAlias(alias, request);
     }
 
-
-
 }

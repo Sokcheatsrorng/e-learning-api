@@ -4,6 +4,7 @@ import co.istad.elearningapi.features.instructor.dto.InstructorCreateRequest;
 import co.istad.elearningapi.features.instructor.dto.InstructorResponse;
 import co.istad.elearningapi.features.instructor.dto.InstructorUpdateRequest;
 import co.istad.elearningapi.features.user.dto.UserCreateRequest;
+import co.istad.elearningapi.features.user.dto.UserDetailsResponse;
 import co.istad.elearningapi.features.user.dto.UserResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class InstructorController {
     }
 
     @GetMapping("/{username}")
-    UserResponse findProfileByUsername(@PathVariable String username){
+    UserDetailsResponse findProfileByUsername(@PathVariable String username){
         return instructorService.findProfileByUsername(username);
     }
 
