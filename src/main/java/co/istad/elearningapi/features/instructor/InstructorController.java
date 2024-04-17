@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class InstructorController {
     private final InstructorService instructorService;
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     void createNew(@Valid @RequestBody InstructorCreateRequest instructorCreateRequest) {
         instructorService.createNew(instructorCreateRequest);
@@ -35,6 +37,7 @@ public class InstructorController {
         return instructorService.findProfileByUsername(username);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{username}")
     void updateProfile(@PathVariable String username,
                             @Valid @RequestBody InstructorUpdateRequest instructorUpdateRequest
