@@ -69,6 +69,8 @@ public class UserController {
     BaseMessage enableUserByUsername(@PathVariable String username){
         return userService.enableUserByUsername(username);
     }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{username}")
     void  deleteUserByUsername(@PathVariable String username){
         userService.deleteUerByUserName(username);

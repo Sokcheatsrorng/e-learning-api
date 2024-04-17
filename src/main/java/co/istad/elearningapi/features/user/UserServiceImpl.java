@@ -5,9 +5,11 @@ import co.istad.elearningapi.base.BaseMessage;
 import co.istad.elearningapi.domain.Role;
 import co.istad.elearningapi.domain.User;
 import co.istad.elearningapi.features.user.dto.RoleResponse;
+import co.istad.elearningapi.features.user.dto.UserCreateRequest;
 import co.istad.elearningapi.features.user.dto.UserDetailsResponse;
 import co.istad.elearningapi.mapper.RoleMapper;
 import co.istad.elearningapi.mapper.UserMapper;
+import co.istad.elearningapi.util.RandomUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 @Service

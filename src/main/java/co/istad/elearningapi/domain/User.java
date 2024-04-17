@@ -75,7 +75,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Student> students;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Instructor> instructors;
 
     @ManyToOne
