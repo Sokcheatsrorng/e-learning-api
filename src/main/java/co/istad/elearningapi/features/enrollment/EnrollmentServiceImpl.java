@@ -1,21 +1,30 @@
 package co.istad.elearningapi.features.enrollment;
 
-import co.istad.elearningapi.domain.Course;
-import co.istad.elearningapi.domain.Enrollment;
-import co.istad.elearningapi.domain.Student;
-import co.istad.elearningapi.domain.User;
+import co.istad.elearningapi.domain.*;
 import co.istad.elearningapi.features.course.CourseRepository;
 import co.istad.elearningapi.features.enrollment.dto.EnrollmentCreateRequest;
+import co.istad.elearningapi.features.enrollment.dto.EnrollmentResponse;
+import co.istad.elearningapi.features.enrollment.dto.EnrollmentUpdateRequest;
 import co.istad.elearningapi.features.student.StudentRepository;
+import co.istad.elearningapi.features.user.UserRepository;
+import co.istad.elearningapi.features.user.dto.UserDetailsResponse;
 import co.istad.elearningapi.mapper.EnrollmentMapper;
 import co.istad.elearningapi.util.RandomCodeUtil;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -64,7 +73,7 @@ public class EnrollmentServiceImpl implements EnrollmentService{
         enrollment.setDeleted(false);
         enrollment.setProgress(0);
 
-        if(enrollment.getProgress()== 100){
+        if(enrollment.getProgress() == 100){
             enrollment.setCertified(true);
         }else {
             enrollment.setCertified(false);
@@ -75,4 +84,65 @@ public class EnrollmentServiceImpl implements EnrollmentService{
         enrollmentRepository.save(enrollment);
 
     }
+    @Override
+    public EnrollmentResponse findEnrollmentByCode(String code) {
+
+        Enrollment enrollment = enrollmentRepository.findByCode(code).orElseThrow(
+                ()-> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Enrollment not found")
+
+        );
+
+    return  enrollmentMapper.toEnrollmentResponse(enrollment);
+    }
+
+    @Override
+    public void updateProgress(EnrollmentUpdateRequest request, String code) {
+        Enrollment enrollment = enrollmentRepository.findByCode(code)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Enrollment not found!"));
+        enrollment.setProgress(request.progress());
+        enrollmentRepository.save(enrollment);
+
+    }
+
+    @Override
+    public List<EnrollmentResponse> findAllEnrollments(int page, int size,
+                                                       String code,
+                                                       String courseTitle,
+                                                       String courseCategory,
+                                                       String studentUsername,
+                                                       boolean isCertified) {
+
+        Specification<Enrollment> spec = Specification.where(null);
+        if (code != null && !code.isEmpty()){
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("code"), code));
+        }
+        if (courseTitle != null && !courseTitle.isEmpty()){
+            spec = spec.and(((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("courseTitle"), courseTitle)));
+        }
+        if (courseCategory != null && !courseCategory.isEmpty()){
+            spec = spec.and(((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("courseCategory"), courseCategory)));
+        }
+        if (studentUsername != null && !studentUsername.isEmpty()){
+            spec = spec.and(((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("studentUsername"), studentUsername)));
+        }
+        if (isCertified ){
+            spec = spec.and(((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("isCertified"), isCertified)));
+        }
+       Sort sort = Sort.by(Sort.Direction.ASC, "enrolledAt");
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        List<Enrollment> enrollments = enrollmentRepository.findAll(spec,pageable);
+
+        return enrollmentMapper.toEnrollmentResponseList(enrollments);
+
+    }
+
+
 }
