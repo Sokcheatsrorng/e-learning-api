@@ -6,7 +6,7 @@ import co.istad.elearningapi.features.user.dto.UserCreateRequest;
 import org.springframework.data.domain.Page;
 
 public interface InstructorService {
-    void createNew(UserCreateRequest userCreateRequest,InstructorCreateRequest instructorCreateRequest);
+    void createNew(InstructorCreateRequest instructorCreateRequest);
 
     Page<InstructorResponse> findList(int page, int limit);
 

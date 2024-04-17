@@ -5,6 +5,7 @@ public record InstructorCreateRequest(
         String github,
         String jobTitle,
         String linkIn,
-        String website
+        String website,
+        String username
 ) {
 }

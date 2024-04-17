@@ -16,7 +16,7 @@ public class InstructorController {
     private final InstructorService instructorService;
 
     @PostMapping
-    void createNew(@Valid @RequestBody InstructorCreateRequest instructorCreateRequest, UserCreateRequest userCreateRequest) {
-        instructorService.createNew(userCreateRequest, instructorCreateRequest);
+    void createNew(@Valid @RequestBody InstructorCreateRequest instructorCreateRequest) {
+        instructorService.createNew(instructorCreateRequest);
     }
 }

@@ -30,36 +30,16 @@ public class InstructorServiceImpl implements InstructorService{
     private final InstructorMapper instructorMapper;
 
     @Override
-    public void createNew(UserCreateRequest userCreateRequest, InstructorCreateRequest instructorCreateRequest) {
-        if(userRepository.existsByPhoneNumber(userCreateRequest.phoneNumber())){
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Phone number already in use"
-            );
-        }
-        if(userRepository.existsByEmail(userCreateRequest.email())){
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Email already in use"
-            );
-        }
-        if(userRepository.existsByNationalIdCard(userCreateRequest.nationalIdCard())){
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "National Id card already in use"
-            );
-        }
-        if(!userCreateRequest.password().equals(userCreateRequest.confirmedPassword())){
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Passwords do not match"
-            );
-        }
-        User user = userMapper.fromUserCreateRequest(userCreateRequest);
-        user.setUuid(UUID.randomUUID().toString());
-        user.setIsDeleted(false);
-        user.setIsVerified(true);
-        user.setProfile("image.png");
+    public void createNew(InstructorCreateRequest instructorCreateRequest) {
+
+        User user = userRepository.findByUsername(instructorCreateRequest.username())
+                .orElseThrow(
+                        () -> new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "User has not been found!"
+                        )
+                );
+
         List<Role> roles = new ArrayList<>();
 
         Role userRole = roleRepository.findByName("USER")
