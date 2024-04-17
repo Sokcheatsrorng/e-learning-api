@@ -11,8 +11,8 @@ public record StudentCreateRequest(
         String university,
 
         // we use uuid of user to create student role
-        @NotNull(message="UUID of user is required")
-        String userUuid
+        @NotNull(message="Username of user is required")
+        String username
 
 ) {
 }
