@@ -7,6 +7,6 @@ public record StudentResponse(
 
         String highSchool,
 
-        UserDetailsResponse userDetailsResponse
+        UserDetailsResponse user
 ) {
 }

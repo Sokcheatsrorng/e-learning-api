@@ -33,31 +33,43 @@ public class EnrollmentController {
         return enrollmentService.findEnrollmentByCode(code);
     }
 
-    @PutMapping("/{code}/")
+    @PutMapping("/{code}")
     void updateProgress(@Valid @PathVariable String code,@RequestBody EnrollmentUpdateRequest request) {
         enrollmentService.updateProgress(request, code);
     }
 
     @GetMapping
-    List<EnrollmentResponse> findAll(@Valid
-            @RequestParam(required = false, defaultValue = "0") int page,
+    List<EnrollmentResponse> findAll(
+            @Valid @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "5") int size,
             @RequestParam(required = false, defaultValue = "") String sort,
             @RequestParam(required = false, defaultValue = "") String code,
             @RequestParam(required = false, defaultValue = "") String courseTitle,
             @RequestParam(required = false, defaultValue = "") String courseCategory,
             @RequestParam(required = false, defaultValue = "") String studentUsername,
-            @RequestParam(required = false, defaultValue = "") boolean isCertified
+            @RequestParam(required = false, defaultValue = "false") boolean isCertified
     ) {
+        Sort sortObject = Sort.unsorted();
+        if (!sort.isEmpty()) {
+            String[] sortParams = sort.split(":");
+            if (sortParams.length == 2) {
+                Sort.Direction direction = Sort.Direction.fromString(sortParams[1]);
+                if (sortParams[0].equals("enrolledAt")) {
+                    sortObject = Sort.by(direction, sortParams[0]);
+                }
+            }
+        }
+
         return enrollmentService.findAllEnrollments(
                 page,
                 size,
+                sortObject,
                 code,
                 courseTitle,
                 courseCategory,
                 studentUsername,
                 isCertified
-               );
+        );
     }
 
     @PutMapping("/{code}/is-certified")
@@ -70,7 +82,7 @@ public class EnrollmentController {
         return enrollmentService.getProgress(code);
     }
 
-    @PutMapping("/{code}")
+    @PutMapping("/{code}/disable")
     void disableEnrollment(@PathVariable String code) {
         enrollmentService.disableEnrollment(code);
     }

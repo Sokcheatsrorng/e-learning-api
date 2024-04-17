@@ -8,10 +8,7 @@ import java.time.LocalTime;
 
 public record EnrollmentCreateRequest(
 
-        LocalTime enrollmentAt,
-        boolean isDeleted,
-        int progress,
-        Student student,
+        Long studentId,
         String courseAlias
 ) {
 }

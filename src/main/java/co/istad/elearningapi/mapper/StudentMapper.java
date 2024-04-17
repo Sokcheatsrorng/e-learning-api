@@ -16,7 +16,7 @@ public interface StudentMapper {
 
     Student fromStudentCreateRequest(StudentCreateRequest studentCreateRequest);
     List<StudentResponse> toStudentResponseList(List<Student> students);
-    @Mapping(source = "user", target = "userDetailsResponse")
+    @Mapping(source = "user", target = "user")
     StudentResponse toStudentResponse(Student student);
 
 

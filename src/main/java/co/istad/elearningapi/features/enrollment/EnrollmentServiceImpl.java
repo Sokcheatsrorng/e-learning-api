@@ -2,15 +2,19 @@ package co.istad.elearningapi.features.enrollment;
 
 import co.istad.elearningapi.domain.*;
 import co.istad.elearningapi.features.course.CourseRepository;
+import co.istad.elearningapi.features.course.dto.CourseResponse;
 import co.istad.elearningapi.features.enrollment.dto.EnrollmentCreateRequest;
 import co.istad.elearningapi.features.enrollment.dto.EnrollmentProgressResponse;
 import co.istad.elearningapi.features.enrollment.dto.EnrollmentResponse;
 import co.istad.elearningapi.features.enrollment.dto.EnrollmentUpdateRequest;
 import co.istad.elearningapi.features.student.StudentRepository;
+import co.istad.elearningapi.mapper.CourseMapper;
 import co.istad.elearningapi.mapper.EnrollmentMapper;
 import co.istad.elearningapi.util.RandomCodeUtil;
+import co.istad.elearningapi.util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -32,6 +36,7 @@ public class EnrollmentServiceImpl implements EnrollmentService{
     private final CourseRepository courseRepository;
     private final StudentRepository studentRepository;
     private final EnrollmentMapper enrollmentMapper;
+    private final CourseMapper courseMapper;
 
 
     @Override
@@ -41,22 +46,24 @@ public class EnrollmentServiceImpl implements EnrollmentService{
                 ()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found")
         );
         // if student enroll this course can't enroll this course again
-        if(enrollmentRepository.existsByStudentIdAndCourseAlias(request.student().getId(), course.getAlias())){
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Enrollment already exists");
-        };
+        Student student = studentRepository.findById(request.studentId())
+                .orElseThrow(
+                        () -> new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Student has not been found!"
+                        )
+                );
 
         //  student info
-        Student student = new Student();
         student.setIsBlocked(false);
-        student.setId(request.student().getId());
 
         // Check if the highSchool field is null in the request
-        if (request.student().getHighSchool() == null) {
-            student.setUniversity(request.student().getUniversity());
+        if (student.getHighSchool() == null) {
+            student.setUniversity(student.getUniversity());
         }
 
-        if (request.student().getHighSchool() != null) {
-            student.setHighSchool(request.student().getHighSchool());
+        if (student.getHighSchool() != null) {
+            student.setHighSchool(student.getHighSchool());
         }
         studentRepository.save(student);
 
@@ -64,8 +71,8 @@ public class EnrollmentServiceImpl implements EnrollmentService{
         course.setAlias(request.courseAlias());
         courseRepository.save(course);
         // enroll
-        Enrollment enrollment = enrollmentMapper.formEnrollmentCreateRequest(request);
-        enrollment.setCode(RandomCodeUtil.generateRandomCode());
+        Enrollment enrollment = new Enrollment();
+        enrollment.setCode(RandomUtil.generateNineDigitString());
         enrollment.setEnrolledAt(LocalTime.now());
         enrollment.setDeleted(false);
         enrollment.setProgress(0);
@@ -96,7 +103,8 @@ public class EnrollmentServiceImpl implements EnrollmentService{
         if (matchingEnrollment.isPresent()) {
             int progress = matchingEnrollment.get().getProgress();
             Course course = matchingEnrollment.get().getCourse();
-            return new EnrollmentProgressResponse(progress, course);
+            CourseResponse courseResponse = courseMapper.toCourseResponse(course);
+            return new EnrollmentProgressResponse(progress, courseResponse);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment not found");
         }
@@ -156,46 +164,52 @@ public class EnrollmentServiceImpl implements EnrollmentService{
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Enrollment not found!"));
         enrollment.setProgress(request.progress());
+        if(request.progress() == 100){
+            enrollment.setCertified(true);
+        }else {
+            enrollment.setCertified(false);
+        }
         enrollmentRepository.save(enrollment);
 
     }
 
-    @Override
-    public List<EnrollmentResponse> findAllEnrollments(int page, int size,
-                                                       String code,
-                                                       String courseTitle,
-                                                       String courseCategory,
-                                                       String studentUsername,
-                                                       boolean isCertified) {
 
+    @Override
+    public List<EnrollmentResponse> findAllEnrollments(
+            int page,
+            int size,
+            Sort sort,
+            String code,
+            String courseTitle,
+            String courseCategory,
+            String studentUsername,
+            boolean isCertified
+    ) {
         Specification<Enrollment> spec = Specification.where(null);
-        if (code != null && !code.isEmpty()){
+        if (!code.isEmpty()) {
             spec = spec.and((root, query, criteriaBuilder) ->
                     criteriaBuilder.equal(root.get("code"), code));
         }
-        if (courseTitle != null && !courseTitle.isEmpty()){
-            spec = spec.and(((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("courseTitle"), courseTitle)));
+        if (!courseTitle.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("courseTitle"), courseTitle));
         }
-        if (courseCategory != null && !courseCategory.isEmpty()){
-            spec = spec.and(((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("courseCategory"), courseCategory)));
+        if (!courseCategory.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("courseCategory"), courseCategory));
         }
-        if (studentUsername != null && !studentUsername.isEmpty()){
-            spec = spec.and(((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("studentUsername"), studentUsername)));
+        if (!studentUsername.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("studentUsername"), studentUsername));
         }
-        if (isCertified ){
-            spec = spec.and(((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("isCertified"), isCertified)));
+        if (isCertified) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.isTrue(root.get("isCertified")));
         }
-       Sort sort = Sort.by(Sort.Direction.ASC, "enrolledAt");
-
         Pageable pageable = PageRequest.of(page, size, sort);
-        List<Enrollment> enrollments = enrollmentRepository.findAll(spec,pageable);
+        Page<Enrollment> enrollmentPage = enrollmentRepository.findAll(spec, pageable);
 
-        return enrollmentMapper.toEnrollmentResponseList(enrollments);
-
+        return enrollmentMapper.toEnrollmentResponseList(enrollmentPage.getContent());
     }
 
 
