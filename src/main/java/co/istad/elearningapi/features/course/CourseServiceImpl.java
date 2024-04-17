@@ -35,7 +35,6 @@ public class CourseServiceImpl implements CourseService{
     @Value("${MEDIA_BASE_URI}")
     private String mediaBaseUri;
 
-
     @Override
     public CourseDetailsResponse findCourseDetailsByAlias(String alias) {
 
