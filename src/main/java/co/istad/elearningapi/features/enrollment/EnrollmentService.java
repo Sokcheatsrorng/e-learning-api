@@ -1,12 +1,9 @@
 package co.istad.elearningapi.features.enrollment;
 
-import co.istad.elearningapi.domain.Enrollment;
 import co.istad.elearningapi.features.enrollment.dto.EnrollmentCreateRequest;
+import co.istad.elearningapi.features.enrollment.dto.EnrollmentProgressResponse;
 import co.istad.elearningapi.features.enrollment.dto.EnrollmentResponse;
 import co.istad.elearningapi.features.enrollment.dto.EnrollmentUpdateRequest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -22,4 +19,9 @@ public interface EnrollmentService {
                                         boolean isCertified);
 
 
+    EnrollmentProgressResponse getProgress(String code);
+
+    void updateCertify(String code);
+
+    void disableEnrollment(String code);
 }

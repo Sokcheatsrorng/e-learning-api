@@ -18,7 +18,5 @@ import java.util.Optional;
 public interface EnrollmentRepository extends JpaRepository<Enrollment,Long> {
     Boolean existsByStudentIdAndCourseAlias(Long id, String alias);
     Optional<Enrollment> findByCode(String code);
-
-
     List<Enrollment> findAll(Specification<Enrollment> spec, Pageable pageable);
 }

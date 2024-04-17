@@ -2,6 +2,7 @@ package co.istad.elearningapi.features.enrollment;
 
 import co.istad.elearningapi.domain.Enrollment;
 import co.istad.elearningapi.features.enrollment.dto.EnrollmentCreateRequest;
+import co.istad.elearningapi.features.enrollment.dto.EnrollmentProgressResponse;
 import co.istad.elearningapi.features.enrollment.dto.EnrollmentResponse;
 import co.istad.elearningapi.features.enrollment.dto.EnrollmentUpdateRequest;
 import jakarta.validation.Valid;
@@ -19,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/enrollments")
 
-public class EnrollmentContoller {
+public class EnrollmentController {
     private final EnrollmentService enrollmentService;
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -32,7 +33,7 @@ public class EnrollmentContoller {
         return enrollmentService.findEnrollmentByCode(code);
     }
 
-    @PutMapping("/{code}")
+    @PutMapping("/{code}/")
     void updateProgress(@Valid @PathVariable String code,@RequestBody EnrollmentUpdateRequest request) {
         enrollmentService.updateProgress(request, code);
     }
@@ -59,5 +60,18 @@ public class EnrollmentContoller {
                );
     }
 
+    @PutMapping("/{code}/is-certified")
+    void updateCertify(@PathVariable String code) {
+        enrollmentService.updateCertify(code);
+    }
 
+    @GetMapping("/{code}/progress")
+    EnrollmentProgressResponse getProgress(@PathVariable String code) {
+        return enrollmentService.getProgress(code);
+    }
+
+    @PutMapping("/{code}")
+    void disableEnrollment(@PathVariable String code) {
+        enrollmentService.disableEnrollment(code);
+    }
 }
