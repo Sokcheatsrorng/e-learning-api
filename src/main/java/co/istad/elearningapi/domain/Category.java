@@ -1,6 +1,7 @@
 package co.istad.elearningapi.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ public class Category {
 
     private boolean isDeleted;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "parent_category_id")
     private Category parentCategory;
