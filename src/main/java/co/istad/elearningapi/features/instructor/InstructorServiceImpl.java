@@ -1,0 +1,104 @@
+package co.istad.elearningapi.features.instructor;
+
+import co.istad.elearningapi.domain.Instructor;
+import co.istad.elearningapi.domain.Role;
+import co.istad.elearningapi.domain.User;
+import co.istad.elearningapi.features.instructor.dto.InstructorCreateRequest;
+import co.istad.elearningapi.features.instructor.dto.InstructorResponse;
+import co.istad.elearningapi.features.user.RoleRepository;
+import co.istad.elearningapi.features.user.UserRepository;
+import co.istad.elearningapi.features.user.dto.UserCreateRequest;
+import co.istad.elearningapi.mapper.InstructorMapper;
+import co.istad.elearningapi.mapper.UserMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class InstructorServiceImpl implements InstructorService{
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final RoleRepository roleRepository;
+    private final InstructorMapper instructorMapper;
+
+    @Override
+    public void createNew(UserCreateRequest userCreateRequest, InstructorCreateRequest instructorCreateRequest) {
+        if(userRepository.existsByPhoneNumber(userCreateRequest.phoneNumber())){
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Phone number already in use"
+            );
+        }
+        if(userRepository.existsByEmail(userCreateRequest.email())){
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Email already in use"
+            );
+        }
+        if(userRepository.existsByNationalIdCard(userCreateRequest.nationalIdCard())){
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "National Id card already in use"
+            );
+        }
+        if(!userCreateRequest.password().equals(userCreateRequest.confirmedPassword())){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Passwords do not match"
+            );
+        }
+        User user = userMapper.fromUserCreateRequest(userCreateRequest);
+        user.setUuid(UUID.randomUUID().toString());
+        user.setIsDeleted(false);
+        user.setIsVerified(true);
+        user.setProfile("image.png");
+        List<Role> roles = new ArrayList<>();
+
+        Role userRole = roleRepository.findByName("USER")
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "Role not found"
+                        ));
+
+        roles.add(userRole);
+        user.setRoles(roles);
+
+        Role instructorRole = roleRepository.findByName("INSTRUCTOR")
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "Role not found"
+                        ));
+
+        roles.add(instructorRole);
+        user.setRoles(roles);
+
+        Instructor instructor = instructorMapper.fromInstructorCreateRequest(instructorCreateRequest);
+        instructor.setBlocked(false);
+        instructor.setUser(user);
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public Page<InstructorResponse> findList(int page, int limit) {
+        return null;
+    }
+
+    @Override
+    public InstructorResponse findProfileByUsername(String username) {
+        return null;
+    }
+
+    @Override
+    public void updateProfile(String username, String mediaName) {
+
+    }
+}

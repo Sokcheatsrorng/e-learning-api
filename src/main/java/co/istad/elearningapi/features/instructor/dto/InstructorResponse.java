@@ -1,5 +1,7 @@
 package co.istad.elearningapi.features.instructor.dto;
 
+import co.istad.elearningapi.features.user.dto.UserDetailsResponse;
+
 import java.util.List;
 
 public record InstructorResponse(
@@ -8,6 +10,7 @@ public record InstructorResponse(
     String jobTitle,
     String linkedIn,
     String website,
-    List<CourseNameResponse> courses
+    List<CourseNameResponse> courses,
+    UserDetailsResponse userDetailsResponse
 ) {
 }

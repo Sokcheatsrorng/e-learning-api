@@ -23,4 +23,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("UPDATE User as u SET u.isDeleted = FALSE WHERE u.username = ?1")
     void enableUserByUsername(String username);
+
+    boolean existsByPhoneNumber(String phoneNumber);
+
+    boolean existsByNationalIdCard (String nationalIdCard);
+
+    boolean existsByEmail(String email);
 }
