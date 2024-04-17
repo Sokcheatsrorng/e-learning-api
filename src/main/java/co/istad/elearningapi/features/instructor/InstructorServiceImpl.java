@@ -28,6 +28,7 @@ public class InstructorServiceImpl implements InstructorService{
     private final UserMapper userMapper;
     private final RoleRepository roleRepository;
     private final InstructorMapper instructorMapper;
+    private final InstructorRepository instructorRepository;
 
     @Override
     public void createNew(InstructorCreateRequest instructorCreateRequest) {
@@ -64,7 +65,8 @@ public class InstructorServiceImpl implements InstructorService{
         instructor.setBlocked(false);
         instructor.setUser(user);
 
-        userRepository.save(user);
+        instructorRepository.save(instructor);
+
     }
 
     @Override
