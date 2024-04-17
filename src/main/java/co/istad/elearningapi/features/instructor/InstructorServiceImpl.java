@@ -34,6 +34,13 @@ public class InstructorServiceImpl implements InstructorService{
     @Override
     public void createNew(InstructorCreateRequest instructorCreateRequest) {
 
+        if (!userRepository.existsByUsername(instructorCreateRequest.username())){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "User has not been found"
+            );
+        }
+
         User user = userRepository.findByUsername(instructorCreateRequest.username())
                 .orElseThrow(
                         () -> new ResponseStatusException(
