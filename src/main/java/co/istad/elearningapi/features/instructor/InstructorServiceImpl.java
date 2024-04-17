@@ -33,6 +33,13 @@ public class InstructorServiceImpl implements InstructorService{
     @Override
     public void createNew(InstructorCreateRequest instructorCreateRequest) {
 
+        if (!userRepository.existsByUsername(instructorCreateRequest.username())){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "User has not been found"
+            );
+        }
+
         User user = userRepository.findByUsername(instructorCreateRequest.username())
                 .orElseThrow(
                         () -> new ResponseStatusException(
@@ -42,15 +49,6 @@ public class InstructorServiceImpl implements InstructorService{
                 );
 
         List<Role> roles = new ArrayList<>();
-
-        Role userRole = roleRepository.findByName("USER")
-                .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                "Role not found"
-                        ));
-
-        roles.add(userRole);
-        user.setRoles(roles);
 
         Role instructorRole = roleRepository.findByName("INSTRUCTOR")
                 .orElseThrow(() ->
