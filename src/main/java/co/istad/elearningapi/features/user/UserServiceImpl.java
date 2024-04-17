@@ -5,9 +5,11 @@ import co.istad.elearningapi.base.BaseMessage;
 import co.istad.elearningapi.domain.Role;
 import co.istad.elearningapi.domain.User;
 import co.istad.elearningapi.features.user.dto.RoleResponse;
+import co.istad.elearningapi.features.user.dto.UserCreateRequest;
 import co.istad.elearningapi.features.user.dto.UserDetailsResponse;
 import co.istad.elearningapi.mapper.RoleMapper;
 import co.istad.elearningapi.mapper.UserMapper;
+import co.istad.elearningapi.util.RandomUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 @Service
@@ -107,5 +110,28 @@ public class UserServiceImpl implements UserService {
         return new BaseMessage("User has been disabled");
     }
 
+    @Override
+    public UserDetailsResponse createUser(UserCreateRequest userCreateRequest) {
 
+        User user = userMapper.fromUserCreateRequest(userCreateRequest);
+
+        user.setIsVerified(false);
+        user.setUuid(UUID.randomUUID().toString());
+        user.setVerifiedCode(RandomUtil.generateNineDigitString());
+
+        List<Role> roles = new ArrayList<>();
+        Role userRole = roleRepository.findByName("USER")
+                        .orElseThrow(
+                                () -> new ResponseStatusException(
+                                        HttpStatus.NOT_FOUND,
+                                        "Role has not been found!"
+                                )
+                        );
+        roles.add(userRole);
+        user.setRoles(roles);
+
+        userRepository.save(user);
+
+        return userMapper.toUserDetailsResponse(user);
+    }
 }

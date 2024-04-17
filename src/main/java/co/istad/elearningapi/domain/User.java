@@ -25,10 +25,6 @@ public class User {
     @Column(length = 120)
     private String address2;
 
-//    private City city;
-//
-//    private Country country;
-
     private LocalDate dob;
 
     @Column(nullable = false, unique = true)

@@ -55,7 +55,15 @@ public class InstructorServiceImpl implements InstructorService{
                         new ResponseStatusException(HttpStatus.NOT_FOUND,
                                 "Role not found"
                         ));
+        Role userRole = roleRepository.findByName("USER")
+                .orElseThrow(
+                        () -> new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Role not found!"
+                        )
+                );
 
+        roles.add(userRole);
         roles.add(instructorRole);
         user.setRoles(roles);
 

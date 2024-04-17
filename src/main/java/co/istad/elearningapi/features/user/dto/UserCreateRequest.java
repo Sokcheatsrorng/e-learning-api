@@ -43,6 +43,8 @@ public record UserCreateRequest(
 
         String familyName,
 
-        String profile
+        String profile,
+        String city,
+        String country
 ) {
 }
