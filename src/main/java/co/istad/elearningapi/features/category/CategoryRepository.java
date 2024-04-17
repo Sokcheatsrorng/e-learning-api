@@ -12,7 +12,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     boolean existsByAlias(String alias);
 
-
     @Modifying
     @Query("UPDATE Category as ca SET ca.isDeleted = TRUE WHERE ca.alias = ?1")
     void disableCategoryByAlias(String alias);

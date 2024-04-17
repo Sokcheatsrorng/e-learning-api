@@ -8,6 +8,7 @@ import co.istad.elearningapi.features.category.CategoryRepository;
 import co.istad.elearningapi.features.course.dto.*;
 import co.istad.elearningapi.features.instructor.InstructorRepository;
 import co.istad.elearningapi.mapper.CourseMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -107,6 +108,7 @@ public class CourseServiceImpl implements CourseService{
 
     }
 
+    @Transactional
     @Override
     public BaseMessage disableCourseByAlias(String alias) {
 

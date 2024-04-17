@@ -6,6 +6,7 @@ import co.istad.elearningapi.features.category.dto.CategoryParentResponse;
 import co.istad.elearningapi.features.category.dto.CategoryRequest;
 import co.istad.elearningapi.features.category.dto.CategoryResponse;
 import co.istad.elearningapi.mapper.CategoryMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.resource.transaction.backend.jta.internal.JtaTransactionAdapter;
@@ -31,20 +32,18 @@ public class CategoryServiceImpl implements CategoryService{
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
-    @Value("${MEDIA_BASE_URI}")
-    private String mediaBaseUri;
-
     @Override
     public void updateCategoryByAlias(String alias, CategoryRequest updateRequest){
 
-        Category category = categoryRepository.findByAlias(alias)
-                .orElseThrow(()->
-                new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "This category not found!"));
+        if (categoryRepository.existsByAlias(alias)){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Category has not been found"
+            );
+        }
 
-        category.setAlias(updateRequest.alias());
-        category.setName(updateRequest.name());
-        category.setIcon(mediaBaseUri + "IMAGE/" + updateRequest.icon());
+        Category category = categoryMapper.fromCategoryRequest(updateRequest);
+
         categoryRepository.save(category);
     }
 
@@ -61,8 +60,7 @@ public class CategoryServiceImpl implements CategoryService{
         newCategory.setAlias(categoryRequest.alias());
         newCategory.setName(categoryRequest.name());
         newCategory.setIcon(categoryRequest.icon());
-        newCategory.setParentCategory(categoryRequest.parentCategory());
-        newCategory.setDeleted(categoryRequest.isDeleted());
+        newCategory.setDeleted(false);
 
         categoryRepository.save(newCategory);
     }
@@ -107,6 +105,7 @@ public class CategoryServiceImpl implements CategoryService{
         return accounts.map(categoryMapper::toCategoryResponse);
     }
 
+    @Transactional
     @Override
     public BaseMessage disableCategoryByAlias(String alias) {
 

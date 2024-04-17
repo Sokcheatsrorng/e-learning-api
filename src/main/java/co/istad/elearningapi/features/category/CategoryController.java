@@ -7,6 +7,7 @@ import co.istad.elearningapi.features.category.dto.CategoryRequest;
 import co.istad.elearningapi.features.category.dto.CategoryResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,9 +44,15 @@ public class CategoryController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/{alias}")
+    @PutMapping("/{alias}/disable")
     void updateByAlias(@PathVariable String alias) {
         categoryService.disableCategoryByAlias(alias);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/{alias}")
+    void updateCategoryByAlias(@PathVariable String alias, @Valid @RequestBody CategoryRequest request) {
+        categoryService.updateCategoryByAlias(alias, request);
     }
 
 

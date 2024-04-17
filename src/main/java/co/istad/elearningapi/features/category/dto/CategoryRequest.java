@@ -7,8 +7,6 @@ public record CategoryRequest(
         String alias,
         String name,
         String icon,
-        Long parentCategoryID,
-        Category parentCategory,
-        boolean isDeleted
+        Long parentCategoryID
 ) {
 }
